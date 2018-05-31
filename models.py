@@ -21,17 +21,17 @@ maintance_requests = [
         "type":"repair"
     },
     {
-        "req_id":"2",
+        "id":"2",
         "requests": "computer  missing",
         "type":"repair"
     },
     {
-        "req_id":"3",
+        "id":"3",
         "requests": "software malware",
         "type":"maintenance"
     },
     {
-        "req_id":"4",
+        "id":"4",
         "requests": "computer crashed",
         "type":"repair",
     }
