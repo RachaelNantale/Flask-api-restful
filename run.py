@@ -15,20 +15,21 @@ def create_request():
     data = request.get_json()
     # 2. validate the data
     try:
-        if isinstance(data['request'].encode(), str) and isinstance(data['type'].encode(), str):
+        if isinstance(data['requests'].encode(), str) and isinstance(data['type'].encode(), str):
             # 3. store the data
             id = len(maintance_requests) #  count how many maintance requests you have save so far
             id += 1 
+            
             # req = a_request(id, data['request'], data['type'])
             requ = {
                 'id':id,
-                'request':data['request'],
+                'requests':data['requests'],
                 'type':data['type']
             }
             maintance_requests.append(requ)  #  Save request in the list
 
             return jsonify({
-                'request':requ
+                'requests':requ
             }), 201
     #Add an Attribut error to catch the errors
     except AttributeError:
@@ -84,7 +85,7 @@ def modify_request(id):
             'message': 'A request has been modified',
             'request_id': id
             
-        }), 201
+        }), 200
 #except AttributeError, IndexError):
         return jsonify({
             'status': 'FAIL',

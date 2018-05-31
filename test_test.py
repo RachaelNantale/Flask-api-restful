@@ -24,7 +24,10 @@ class Tests_Maintance_API(TestCase):
                 '/users/requests', 
                 content_type = 'application/json', data =json.dumps(post_data))
             reply = json.loads(response.data.decode())
-
+            # if reply['request'] == None :
+            #     return jsonify({'message': 'Please fill in a request'})
+                
+    
             self.assertEquals(reply['status'], 'OK')
             self.assertEquals(reply['message'], 'A new request has been created')
             self.assertEquals(response.status_code, 201 )
@@ -39,18 +42,19 @@ class Tests_Maintance_API(TestCase):
     
     #modify a request
     def test_modify_request(self):
-        with self.client:
-            # post_data = (
-            #     {
-            #         'request':'#123', 
-            #         'type':'this is a request'})
-            response = self.client.put('/users/requests/<id>', 
-            content_type = 'application/json',)
-            reply = json.loads(response.data.decode())
             
-            self.assertEquals(reply['status'], 'OK')
-            self.assertEquals(reply['message'], 'A Request has been modified')
-            self.assertEquals(response.status_code, 201 )
+         with self.client:
+                post_data = (
+                    {
+                        'request':'#123', 
+                        'type':'this is a request'})
+                response = self.client.put('/users/requests/1',data=  json.dumps(post_data) ,
+                content_type = 'application/json',)
+                reply = json.loads(response.data.decode())  
+                
+                self.assertEquals(reply['status'], 'OK')
+                self.assertEquals(reply['message'], 'A Request has been modified')
+                self.assertEquals(response.status_code, 201 )
 
     
     #fetch all requests
@@ -66,6 +70,23 @@ class Tests_Maintance_API(TestCase):
 
             self.assertEquals(reply['status'], 'OK')
             self.assertEquals(reply['message'], 'here are all your requests')
+            self.assertEquals(response.status_code, 201 )
+
+
+
+    #fetch single id
+    def test_fetch_single_id(self):
+        with self.client:
+            post_data = (
+                {
+                    'request':'lakeli', 
+                    'type':'seada'})
+            response = self.client.get('users/requests/1', 
+            content_type = 'application/json', data =json.dumps(post_data))
+            reply = json.loads(response.data.decode())
+
+            self.assertEquals(reply['status'], 'OK')
+            self.assertEquals(reply['message'], 'here is your request')
             self.assertEquals(response.status_code, 201 )
 
         
