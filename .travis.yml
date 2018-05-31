@@ -1,10 +1,9 @@
 language: python
 python:
+  - "2.7.12"
 #command to install dependencies
 install:
--pip install -r requirements.txt
+  - pip install -r requirements.txt
 #command to run tests
 script:
--nose2 run.py
--nose2 models.py
--nose2 test_test.py
+  -nose2 test_test.py
