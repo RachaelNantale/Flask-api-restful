@@ -14,7 +14,7 @@ def create_request():
     # 1. get the data from request
     data = request.get_json()
    #make sure empty strings are not allowed
-    _requests = data.get('requests')
+    _requests = data.get('requests'),
     if not _requests or _requests == '':
         return jsonify ({'message': 'Missing information. Please fill in'}), 400
     _types = data.get('type')
@@ -23,7 +23,7 @@ def create_request():
 
      # 2. validate the data        
     try:
-        if isinstance(data['requests'].encode(), str) and isinstance(data['type'].encode(), str):
+        if isinstance(data['requests'], str) and isinstance(data['type'], str):
             # 3. store the data
             id = len(maintance_requests) #  count how many maintance requests you have save so far
             id += 1 
@@ -55,12 +55,19 @@ def modify_request(id):
     """
         This endpoint modifies a request 
     """
+    _requests = data.get('requests'),
+    _types = data.get('type')
+    if not _requests or _requests == ' ':
+        return jsonify ({'message': 'Missing information. Please fill in'}), 400
+    _types = data.get('type')
+    if not _types or _types ==' ':
+         return jsonify ({'message': 'Missing infor Please fill in'}), 400
   
     
     #try:
-    if isinstance(data['requests'].encode(), str) and isinstance(data['type'].encode(), str):
-        maintance_requests[int(id)-1]['requests'] = data['requests'].encode() #references a parameter in the dictionary 
-        maintance_requests[int(id)-1]['type'] = data['type'].encode()
+    if isinstance(data['requests'], str) and isinstance(data['type'], str):
+        maintance_requests[int(id)-1]['requests'] = data['requests'] #references a parameter in the dictionary 
+        maintance_requests[int(id)-1]['type'] = data['type']
 
         return jsonify({
             'status': 'OK',
@@ -97,9 +104,9 @@ def fetch_request_id(requestID):
     
     data_r = [data_r2 for data_r2 in maintance_requests if data_r2['id'] == requestID ]
     if len(data_r) == 0:
-        return "Please fill in a valid ID"
+        return jsonify ({"message":"Please fill in a valid ID"}), 400
     return jsonify({
-        'data_r':data_r[0]
+        'Request information':data_r[0]
     }),200
 
 

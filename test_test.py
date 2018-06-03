@@ -1,5 +1,6 @@
 import json
 import flask
+from flask import jsonify
 from run import app
 from flask_testing import TestCase
 
@@ -24,15 +25,15 @@ class Tests_Maintance_API(TestCase):
                 '/api/v1/users/requests', 
                 content_type = 'application/json', data =json.dumps(post_data))
             reply = json.loads(response.data.decode())
-            # if reply['request'] == None :
-            #     return jsonify({'message': 'Please fill in a request'})
+            if reply['requests'] == None :
+                return jsonify({'message': 'Please fill in a request'})
                 
     
             # self.assertEquals(reply['status'], 'OK')
             # self.assertEquals(reply['message'], 'A new request has been created')
             self.assertEquals(response.status_code, 201 )
     
-    #modify a request
+    # #modify a request
     def test_modify_request(self):
             
          with self.client:
@@ -52,7 +53,7 @@ class Tests_Maintance_API(TestCase):
                 self.assertEquals(response.status_code, 200 )
 
     
-    # #fetch all requests
+    # # #fetch all requests
     def test_fetch_all_requests(self):
         with self.client:
             

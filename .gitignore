@@ -1,6 +1,6 @@
-__pycache__
-*env
-.pytest-cache
-.vscode
+/__pycache__
+/env
+/.pytest_cache
+/.vscode
 test_test.pyc
 run.pyc
