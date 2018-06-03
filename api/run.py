@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify,abort
 import json
-from models import *
+from api.models import maintance_requests
 
 app = Flask(__name__)
 

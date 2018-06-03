@@ -1,6 +1,7 @@
-/__pycache__
+*/__pycache__
 /env
-/.pytest_cache
+*/.pytest_cache
 /.vscode
 test_test.pyc
-run.pyc
+__pycache__
+.pytest_cache
