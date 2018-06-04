@@ -1,8 +1,7 @@
 import json
 import flask
 from flask import jsonify
-import api
-from api.run import app
+from ..api.run import app
 from flask_testing import TestCase
 
 #import requests
