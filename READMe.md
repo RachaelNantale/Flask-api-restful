@@ -1,5 +1,7 @@
 
-[![Build Status](https://travis-ci.org/RachaelNantale/Flask-api-restful.svg?branch=file-structure)](https://travis-ci.org/RachaelNantale/Flask-api-restful)
+[![Build Status](https://travis-ci.org/RachaelNantale/Flask-api-restful.svg?branch=file-structure)]
+[![Coverage Status](https://coveralls.io/repos/github/RachaelNantale/Flask-api-restful/badge.svg?branch=master)](https://coveralls.io/github/RachaelNantale/Flask-api-restful?branch=)
+(https://travis-ci.org/RachaelNantale/Flask-api-restful)
 ## Project Link
 'https://rachaelnantale.github.io/Maintenance/UI/'
 
