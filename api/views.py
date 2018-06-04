@@ -1,10 +1,9 @@
 from flask import Flask, request, jsonify,abort
 import json
-from ..api.models import maintance_requests, user_list
+from run import app
+from models import maintance_requests, user_list
 from flask_httpauth import HTTPBasicAuth
 auth = HTTPBasicAuth()
-
-app = Flask(__name__)
 
 #create a new request
 @app.route('/api/v1/users/requests' ,methods= ['POST'])
@@ -37,7 +36,7 @@ def create_request():
                 'type':data['type']
             }
             maintance_requests.append(requ)  #  Save request in the list
-
+            print(requ)
         return jsonify({
             'requests':requ
         }), 201
@@ -115,21 +114,16 @@ def fetch_request_id(requestID):
 
 #@app.route('/api/v1/auth/login', methods = ['POST']
 
-@auth.get_password
-def get_password():
-    if 'username' == [user_list]['username']:
-        return 'python'
-    return None
+# @auth.get_password
+# def get_password():
+#     if 'username' == [user_list]['username']:
+#         return 'python'
+#     return None
 
-@auth.error_handler
-def unauthorized():
-    return make_response(jsonify({'error': 'Unauthorized access'}), 401)
+# @auth.error_handler
+# def unauthorized():
+#     return make_response(jsonify({'error': 'Unauthorized access'}), 401)
 
 
 
     
-
-if __name__ == '__main__':
-    app.run(debug='True')
-                
-                

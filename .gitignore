@@ -5,3 +5,5 @@
 test_test.pyc
 __pycache__
 .pytest_cache
+run.pyc
+__init__.pyc
