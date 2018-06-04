@@ -10,7 +10,7 @@ Flask==1.0.2
 Flask-HTTPAuth==3.2.3
 Flask-Testing==0.7.1
 funcsigs==1.0.2
-futures==3.2.0
+futures
 gunicorn==19.8.1
 isort==4.3.4
 itsdangerous==0.24

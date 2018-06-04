@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify,abort
+from api.views import my_app
 import json
-
-app = Flask(__name__)
+import api
+from api import *
+from api.views import app
+app.register_blueprint(my_app)
 
 
 

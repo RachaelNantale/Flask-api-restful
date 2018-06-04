@@ -1,44 +1,42 @@
-from flask import Flask, request, jsonify,abort
+from flask import Flask, request, jsonify,abort, Blueprint
 import json
-from run import app
-from models import maintance_requests, user_list
+from api.models import maintance_requests, user_list
 from flask_httpauth import HTTPBasicAuth
 auth = HTTPBasicAuth()
+app = Flask(__name__)
 
+my_app = Blueprint('my_app',__name__)
+
+    
 #create a new request
-@app.route('/api/v1/users/requests' ,methods= ['POST'])
+@my_app.route('/api/v1/users/requests' ,methods= ['POST'])
 def create_request():
 
     """
         This endpoint creates a maintance request ticket
     """
-    # 1. get the data from request
+   
     data = request.get_json()
-   #make sure empty strings are not allowed
+   
     _requests = data.get('requests'),
     if not _requests or _requests == '':
         return jsonify ({'message': 'Missing information. Please fill in'}), 400
     _types = data.get('type')
     if not _types or _types =='':
          return jsonify ({'message': 'Missing infor Please fill in'}), 400
-
-     # 2. validate the data        
+   
     try:
         if isinstance(data['requests'], str) and isinstance(data['type'], str):
-            # 3. store the data
-            id = len(maintance_requests) #  count how many maintance requests you have save so far
+            id = len(maintance_requests)
             id += 1 
-        
-            # req = a_request(id, data['request'], data['type'])
-            requ = {
+            Request = {
                 'id':id,
                 'requests':data['requests'],
                 'type':data['type']
             }
-            maintance_requests.append(requ)  #  Save request in the list
-            print(requ)
+            maintance_requests.append(Request)  
         return jsonify({
-            'requests':requ
+            'requests':Request
         }), 201
     #Add an Attribut error to catch the errors
     except AttributeError:
@@ -50,11 +48,9 @@ def create_request():
 #create an api endpoint for modifying requests
 @app.route('/api/v1/users/requests/<id>' ,methods= ['PUT'])
 def modify_request(id):
-     # 1. get the data from request
-    
     data = request.get_json()
     """
-        This endpoint modifies a request 
+    This endpoint modifies a request 
     """
     _requests = data.get('requests'),
     _types = data.get('type')
@@ -87,8 +83,8 @@ def modify_request(id):
 #create API endpoints for fetching all requests
 @app.route('/api/v1/users/requests',methods= ['GET'])
 def fetch_all_requests():
-    count = len(maintance_requests) #  count how many maintance requests you have save so far
-    #requests = maintance_requests
+    count = len(maintance_requests) 
+  
 
 
     return jsonify({
@@ -100,15 +96,28 @@ def fetch_all_requests():
     }), 200
 
 #create API endpoints for fecthind a single id
-@app.route('/api/v1/users/requests/<requestID>', methods = ['GET'])
+@app.route('/api/v1/users/requests/<requestID>/', methods = ['GET'])
 def fetch_request_id(requestID):
-    
-    data_r = [data_r2 for data_r2 in maintance_requests if data_r2['id'] == requestID ]
-    if len(data_r) == 0:
-        return jsonify ({"message":"Please fill in a valid ID"}), 400
+    data = maintance_requests
+    if int(requestID) > len(data):
+        return jsonify({
+            'status':'Fail',
+            'message':'ID not found. Please add a valid ID'
+
+        }),400
+    obj = data[int(requestID)-1]
     return jsonify({
-        'Request information':data_r[0]
-    }),200
+        'status':'Success',
+        'mesaage':'here is your request',
+        'request':obj 
+    })
+    
+    # data_r = [data_r2 for data_r2 in maintance_requests if data_r2['id'] == requestID ]
+    # if len(data_r) == 0:
+    #     return jsonify ({"message":"Please fill in a valid ID"}), 400
+    # return jsonify({
+    #     'Request information':data_r[0]
+    # }),200
 
 # @app.route('/api/v1/auth/register', methods = ['POST'])
 
