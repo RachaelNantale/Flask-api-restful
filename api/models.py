@@ -38,3 +38,26 @@ maintance_requests = [
         
     
 ]
+
+user_list = [
+    {
+        "id":"1",
+        "username": "rachaelN",
+        "password":"123abc"
+    },
+     {
+        "id":"1",
+        "username": "username2",
+        "password":"123abc"
+    },
+     {
+        "id":"1",
+        "username": "username3",
+        "password":"123abc"
+    },
+     {
+        "id":"2",
+        "username": "username4",
+        "password":"123abc"
+    },
+]
