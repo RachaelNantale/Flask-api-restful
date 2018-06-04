@@ -98,6 +98,7 @@ def fetch_all_requests():
 #create API endpoints for fecthind a single id
 @app.route('/api/v1/users/requests/<requestID>/', methods = ['GET'])
 def fetch_request_id(requestID):
+    fetch_requests = []
     data = maintance_requests
     if int(requestID) > len(data):
         return jsonify({
@@ -106,10 +107,11 @@ def fetch_request_id(requestID):
 
         }),400
     obj = data[int(requestID)-1]
+    fetch_requests.append(obj)
+
     return jsonify({
         'status':'Success',
-        'mesaage':'here is your request',
-        'request':obj 
+        'request':fetch_requests
     })
     
     # data_r = [data_r2 for data_r2 in maintance_requests if data_r2['id'] == requestID ]
