@@ -1,4 +1,5 @@
 
+[![Build Status](https://travis-ci.org/RachaelNantale/Flask-api-restful.svg?branch=file-structure)](https://travis-ci.org/RachaelNantale/Flask-api-restful)
 ## Project Link
 'https://rachaelnantale.github.io/Maintenance/UI/'
 
