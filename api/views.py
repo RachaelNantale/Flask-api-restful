@@ -1,9 +1,14 @@
 from flask import Flask, request, jsonify,abort, Blueprint
 import json
+from api.models import a_request, a_user
 from api.models import maintance_requests, user_list
-from flask_httpauth import HTTPBasicAuth
-auth = HTTPBasicAuth()
+import jwt
+import datetime
+import uuid
+from werkzerg.security import generate_password_hash, check_hash
+
 app = Flask(__name__)
+app.config['SECRET_KEY'] = "nanana"
 
 my_app = Blueprint('my_app',__name__)
 
@@ -29,15 +34,9 @@ def create_request():
         if isinstance(data['requests'], str) and isinstance(data['type'], str):
             id = len(maintance_requests)
             id += 1 
-            Request = {
-                'id':id,
-                'requests':data['requests'],
-                'type':data['type']
-            }
+            Request =a_request(id,data['requests'],data['type'] )
             maintance_requests.append(Request)  
-        return jsonify({
-            'requests':Request
-        }), 201
+        return jsonify(Request.get_dict()), 201
     #Add an Attribut error to catch the errors
     except AttributeError:
         return jsonify({
@@ -63,18 +62,14 @@ def modify_request(id):
     
     #try:
     if isinstance(data['requests'], str) and isinstance(data['type'], str):
-        maintance_requests[int(id)-1]['requests'] = data['requests'] #references a parameter in the dictionary 
-        maintance_requests[int(id)-1]['type'] = data['type']
-
-        return jsonify({
-            'status': 'OK',
-            'request': maintance_requests[int(id)-1]['requests'],
-            'message': 'A Request has been modified',
-            'request_id': id
-            
-        }), 200
+        counter = 0
+    for item in maintance_request:
+        if id == item.get_id():
+            maintance_request[counter]
+        return
+        counter = counter +1
+        a_request('id', 'request','type'),200
 #except AttributeError, IndexError):
-    else:
         return jsonify({
             'status': 'FAIL',
             'message': 'Failed to modify a request. Invalid data'
@@ -113,17 +108,27 @@ def fetch_request_id(requestID):
         'status':'Success',
         'request':fetch_requests
     })
-    
-    # data_r = [data_r2 for data_r2 in maintance_requests if data_r2['id'] == requestID ]
-    # if len(data_r) == 0:
-    #     return jsonify ({"message":"Please fill in a valid ID"}), 400
-    # return jsonify({
-    #     'Request information':data_r[0]
-    # }),200
 
-# @app.route('/api/v1/auth/register', methods = ['POST'])
+@app.route('/auth/login', methods = ['POST'])
+def user_login():
+    try:
+        payload = {
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
+            'iat': datetime.datetime.utcnow(),
+            'username': request.get_json()["username"]
+        }
+        token = jwt.encode(payload,app.config.get('SECRET_KEY'),algorithm='HS256')
+        return jsonify({"token":token.decode('UTF-8')})
+    except Exception as e:
+        return e
 
-#@app.route('/api/v1/auth/login', methods = ['POST']
+
+@app.route('/api/v1/users', methods=['POST'])
+def create_user():
+    data = request.get_json()
+    hashed_password = generate_password_hash(data['password'], method='sha256')
+    new_user = User (public_id =str(uuid.uuid4()), name=data ['name'],password,admin=False)   
+
 
 # @auth.get_password
 # def get_password():
