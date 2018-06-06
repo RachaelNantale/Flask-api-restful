@@ -1,5 +1,5 @@
 #create class for
-class a_request:
+class RequestModel:
     def __init__(self, _id, _request, _type):
         self._request = _request
         self._type = _type
@@ -21,10 +21,10 @@ class a_request:
 
 
 maintance_requests = [
-a_request('1', 'computer not working','repair')
+{'_id':'1','_request':'Computer not working','_type':'maintenance'}
 ]
 #create class for users
-class a_user:
+class UserModel:
     def __init__(self, _id, _username, _password):
         self._id = _id
         self._username = _username
@@ -39,11 +39,17 @@ class a_user:
     def get_password(self):
         return self._password
 
+    def get_dict(self):
+        return{'_id':self._id,
+        '_username':self._username,
+        '_password':self._password}
+
+
 
 
 
 
 user_list = [
-a_user('1','rachaelN','123abc')
+{'_id':'1','_username':'RachaelN','_password':'123abc'}
    
 ]
