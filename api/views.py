@@ -1,51 +1,55 @@
 from flask import Flask, request, jsonify,abort, Blueprint, make_response
 import json
-from api.models import a_request, a_user
+from api.models import RequestModel, UserModel
 from api.models import maintance_requests, user_list
 import jwt
 import datetime
 import uuid
-from werkzeug.security import generate_password_hash
 from functools import wraps
-
+from dbHandler import MyDatabase
+# from flask_bcrpyt import Bcrpyt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "nanana"
 
-my_app = Blueprint('my_app',__name__)
 #create a token header
 def token_required(f):
 	@wraps(f)
 	def decorated(*args, **kwargs):
 		token = None
 
-		if 'x-access-token' in request.headers:
-			token = request.headers['x-access-token']
+		if 'Authorization' in request.headers:
+			token = request.headers['Authorization']
 		if not token:
-			return jsonify({'message':'Token is missing'}),401
+			return jsonify({'token':token,  'message':'Token is missing!!!!'}),401
 
 		try:
-			data =jwt.decode(token, app_config('SECRET_KEY'))
-			current_user = a_user.query.filter_by(_id=data['id'])
-		except:
-			return jsonify({'message':'Token is missing'}),401
+			print("***********")
+			print("ssss"+app.config['SECRET_KEY'])
+			print(token)
+			data =jwt.decode(token, app.config['SECRET_KEY'])
+			print('data',data)
+			print(data['_id'])
+			current_user = UserModel.get_id()
+			
+			print("***********")
+			# print('data',data)
+			# print('current user',current_user)
+		except jwt.ExpiredSignatureError:
+			return jsonify({'message':'Token is missing####'}),401
 		return f(current_user, *args, **kwargs)
 	return decorated
 
 	
 #create a new request
-@my_app.route('/api/v1/users/requests' ,methods= ['POST'])
-@token_required
+@app.route('/api/v1/users/requests' ,methods= ['POST'])
 
-def create_request(current_user):
+def create_request():
 
 	"""
 		This endpoint creates a maintance request ticket
 	"""
-	if not current_user.admin:
-		return jsonify({'message: User can not collect all requests'})
-	
-   
+   user = UserModel()
 	data = request.get_json()
    
 	_requests = data.get('requests'),
@@ -59,7 +63,7 @@ def create_request(current_user):
 		if isinstance(data['requests'], str) and isinstance(data['type'], str):
 			id = len(maintance_requests)
 			id += 1 
-			Request =a_request(id,data['requests'],data['type'] )
+			Request =RequestModel(id,data['requests'],data['type'] )
 			maintance_requests.append(Request)  
 		return jsonify(Request.get_dict()), 201
 	#Add an Attribut error to catch the errors
@@ -72,7 +76,6 @@ def create_request(current_user):
 #create an api endpoint for modifying requests
 @app.route('/api/v1/users/requests/<id>' ,methods= ['PUT'])
 @token_required
-
 def modify_request(id, current_user):
 	if not current_user.admin:
 		return jsonify({'message: User can not collect all requests'})
@@ -82,7 +85,8 @@ def modify_request(id, current_user):
 	"""
 	This endpoint modifies a request 
 	"""
-	_requests = data.get('requests'),
+	_requests = data.get('requests')
+	print(_requests)
 	_types = data.get('type')
 	if not _requests or _requests == ' ':
 		return jsonify ({'message': 'Missing information. Please fill in'}), 400
@@ -95,12 +99,12 @@ def modify_request(id, current_user):
 	if isinstance(data['requests'], str) and isinstance(data['type'], str):
 		
 		counter = 0
-	for item in maintance_request:
-		if id == item.get_id():
-			maintance_request[counter]
+	for item in maintance_requests:
+		if id == item['_id']:
+			maintance_requests[counter] = counter
 		return
 		counter = counter +1
-		a_request('id', 'request','type'),200
+		RequestModel('id', 'request','type'),200
 #except AttributeError, IndexError):
 		return jsonify({
 			'status': 'FAIL',
@@ -154,43 +158,76 @@ def fetch_request_id(requestID, current_user):
 		'request':fetch_requests
 	})
 	
-@app.route('/auth/login')
+@app.route('/auth/login/', methods=['POST'])
 
 def user_login():
-	auth = request.authorization
+	auth = request.json
+	usermodel = UserModel
 
-	if not auth or not auth.username or not auth.password:
-		return make_response('could not verify',401,{'WWW-Aunthenticate':'Basic realm="Login required"'})
+	if not auth or not auth['username'] or not auth['password']:
+		return make_response('could not verifys',401,{'WWW-Aunthenticate':'Basic realm="Login required"'})
 
-	user = a_user.filter_by(name=auth.username).first()
+	# user = User.filter_by(name=auth.username).first()
 
-	if not user:
+	if not UserModel:
 		return jsonify({'message':'No user Found'})
 
-	if check_password_hash(user.password, auth.password):
+	if (usermodel.get_password, auth['password']):
 		payload = {
-		'_id':'a_user._id',
+		'_id':'UserModel._id',
 		'exp':datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
 
 		}
-		token = jwt.encode({payload,app.config.get(SECRET_KEY)})
-		return jsonify({'token':token.decode(UTF-8)})
+		token = jwt.encode(payload, app.config['SECRET_KEY'])
+		return jsonify({'token':token.decode('utf-8')}),201
 	return make_response('Could not verify',401,{'WWW-Aunthenticate':'Basic realm="Login required"'})
 	
 
 
 
-@app.route('/api/v1/users', methods=['POST'])
-@token_required
+# @app.route('/api/v1/users', methods=['POST'])
+# @token_required
 
-def create_user(current_user):
-	if not current_user.admin:
-		return jsonify({'message: User can not collect all requests'})
+# def create_user(current_user):
+# 	if not current_user.admin:
+# 		return jsonify({'message: User can not collect all requests'})
 	
-	data = request.get_json()
-	hashed_password = generate_password_hash(data['password'], method='sha256')
-	new_user = a_user(_id =str(uuid.uuid4()), name=data ['username'],password=data['hashed_password'],admin=False)   
+# 	data = request.get_json()
+# 	hashed_password = generate_password_hash(data['password'], method='sha256')
+# 	new_user = a_user(_id =str(uuid.uuid4()), name=data ['username'],password=data['hashed_password'],admin=False)  
 
+
+# @app.route('/api/v1/requests/<requestId>/approve', methods=['PUT'])
+# @token_required
+
+# def create_admin_approve(current_user):
+# 	if not current_user.admin:
+# 		return jsonify({'message: User can not collect all requests'})
+	
+# 	data = request.get_json()
+# 	hashed_password = generate_password_hash(data['password'], method='sha256')
+# 	new_user = a_user(_id)
+
+# @app.route('/api/v1/requests/<requestId>/disaprove', methods=['PUT'])
+# @token_required
+
+# def create_admin_disaprove(current_user):
+# 	if not current_user.admin:
+# 		return jsonify({'message: User can not collect all requests'})
+	
+# 	data = request.get_json()
+# 	hashed_password = generate_password_hash(data['password'], method='sha256')
+# 	new_user = a_user(_id)
+
+# @app.route('/api/v1/requests/<requestId>/resolve', methods=['PUT'])
+# @token_required
+# def create_admin_resolve(current_user):
+# 	if not current_user.admin:
+# 		return jsonify({'message: User can not collect all requests'})
+	
+# 	data = request.get_json()
+# 	hashed_password = generate_password_hash(data['password'], method='sha256')
+# 	new_user = User(_id)
 
 
 	
